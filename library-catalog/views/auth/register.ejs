@@ -1,0 +1,168 @@
+<%- include('../layout', { title: 'Registro' }) %>
+
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Crear una nueva cuenta
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                ¿Ya tienes una cuenta?
+                <a href="/auth/login" class="font-medium text-primary-600 hover:text-primary-500">
+                    Inicia sesión aquí
+                </a>
+            </p>
+        </div>
+
+        <!-- Registration Form -->
+        <form class="mt-8 space-y-6" action="/auth/register" method="POST">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <!-- Full Name -->
+                <div>
+                    <label for="fullName" class="sr-only">Nombre Completo</label>
+                    <input id="fullName" name="fullName" type="text" required
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                        placeholder="Nombre Completo"
+                        value="<%= locals.formData ? formData.fullName : '' %>">
+                </div>
+
+                <!-- Username -->
+                <div>
+                    <label for="username" class="sr-only">Nombre de Usuario</label>
+                    <input id="username" name="username" type="text" required
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                        placeholder="Nombre de Usuario"
+                        value="<%= locals.formData ? formData.username : '' %>">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="sr-only">Correo Electrónico</label>
+                    <input id="email" name="email" type="email" required
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                        placeholder="Correo Electrónico"
+                        value="<%= locals.formData ? formData.email : '' %>">
+                </div>
+
+                <!-- Role -->
+                <div>
+                    <label for="role" class="sr-only">Rol</label>
+                    <select id="role" name="role" required
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm">
+                        <option value="" disabled <%= !locals.formData ? 'selected' : '' %>>Selecciona tu rol</option>
+                        <option value="alumno" <%= locals.formData && formData.role === 'alumno' ? 'selected' : '' %>>Alumno</option>
+                        <option value="docente" <%= locals.formData && formData.role === 'docente' ? 'selected' : '' %>>Docente</option>
+                    </select>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="sr-only">Contraseña</label>
+                    <input id="password" name="password" type="password" required
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                        placeholder="Contraseña">
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label for="confirmPassword" class="sr-only">Confirmar Contraseña</label>
+                    <input id="confirmPassword" name="confirmPassword" type="password" required
+                        class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                        placeholder="Confirmar Contraseña">
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <% if (error) { %>
+                <div class="rounded-md bg-red-50 p-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                <%= error %>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Password Requirements -->
+            <div class="text-sm text-gray-600">
+                <p class="font-medium mb-2">La contraseña debe contener:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li id="lengthCheck" class="text-gray-500">Al menos 6 caracteres</li>
+                    <li id="matchCheck" class="text-gray-500">Las contraseñas deben coincidir</li>
+                </ul>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" id="submitButton" disabled
+                    class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <i class="fas fa-user-plus text-gray-300 group-hover:text-primary-400"></i>
+                    </span>
+                    Registrarse
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Form Validation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const submitButton = document.getElementById('submitButton');
+    const lengthCheck = document.getElementById('lengthCheck');
+    const matchCheck = document.getElementById('matchCheck');
+
+    function validatePassword() {
+        const isLengthValid = password.value.length >= 6;
+        const doPasswordsMatch = password.value === confirmPassword.value;
+
+        lengthCheck.className = isLengthValid ? 'text-green-600' : 'text-gray-500';
+        matchCheck.className = doPasswordsMatch ? 'text-green-600' : 'text-gray-500';
+
+        if (isLengthValid && doPasswordsMatch && form.checkValidity()) {
+            submitButton.disabled = false;
+            submitButton.classList.remove('bg-gray-400');
+            submitButton.classList.add('bg-primary-600', 'hover:bg-primary-700');
+        } else {
+            submitButton.disabled = true;
+            submitButton.classList.remove('bg-primary-600', 'hover:bg-primary-700');
+            submitButton.classList.add('bg-gray-400');
+        }
+    }
+
+    // Add password toggle buttons
+    function addPasswordToggle(inputElement) {
+        const toggleButton = document.createElement('button');
+        toggleButton.type = 'button';
+        toggleButton.className = 'absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600';
+        toggleButton.innerHTML = '<i class="fas fa-eye"></i>';
+        
+        toggleButton.addEventListener('click', function() {
+            const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+            inputElement.setAttribute('type', type);
+            toggleButton.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+
+        inputElement.parentElement.style.position = 'relative';
+        inputElement.parentElement.appendChild(toggleButton);
+    }
+
+    addPasswordToggle(password);
+    addPasswordToggle(confirmPassword);
+
+    // Event listeners
+    password.addEventListener('input', validatePassword);
+    confirmPassword.addEventListener('input', validatePassword);
+    form.addEventListener('input', validatePassword);
+});
+</script>
