@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #dc2626;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f8fafc;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0 0 5px 5px;
+        }
+        .warning {
+            background-color: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #dc2626;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Préstamo Vencido - Acción Requerida</h1>
+    </div>
+    
+    <div class="content">
+        <p>Estimado/a <%= userName %>,</p>
+        
+        <div class="warning">
+            <p><strong>El préstamo del libro "<%= bookTitle %>" está vencido por <%= daysOverdue %> días.</strong></p>
+            <p>La fecha de devolución era el <strong><%= dueDate %></strong>.</p>
+        </div>
+        
+        <p>Le recordamos que es importante devolver los materiales de la biblioteca a tiempo para que otros usuarios puedan acceder a ellos. El retraso en la devolución puede resultar en:</p>
+        
+        <ul>
+            <li>Suspensión temporal del servicio de préstamos</li>
+            <li>Imposibilidad de solicitar nuevos préstamos</li>
+            <li>Posibles sanciones administrativas</li>
+        </ul>
+        
+        <p>Por favor, devuelva el libro lo antes posible para evitar sanciones adicionales.</p>
+        
+        <center>
+            <a href="<%= config.app.url %>/loans/<%= loanId %>" class="button">
+                Ver Detalles del Préstamo
+            </a>
+        </center>
+        
+        <p>Si ya ha devuelto el libro o considera que este mensaje es un error, por favor comuníquese con el personal de la biblioteca.</p>
+        
+        <p>Agradecemos su pronta atención a este asunto.</p>
+        
+        <p>Saludos cordiales,<br>
+        El equipo de la biblioteca</p>
+    </div>
+    
+    <div class="footer">
+        <p>Este es un mensaje automático, por favor no responda a este correo.</p>
+        <p>© <%= new Date().getFullYear() %> Sistema de Biblioteca. Todos los derechos reservados.</p>
+    </div>
+</body>
+</html>
