@@ -1,0 +1,271 @@
+<%- include('../layout', { title: 'Catálogo de Libros' }) %>
+
+<div class="bg-white">
+    <!-- Search and Filters -->
+    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <!-- Search Bar -->
+            <div class="w-full md:w-96">
+                <div class="relative">
+                    <input type="text" id="searchInput" 
+                           class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                           placeholder="Buscar por título, autor o ISBN...">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-search text-gray-400"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="flex gap-4">
+                <select id="categoryFilter" class="input-field">
+                    <option value="">Todas las categorías</option>
+                    <option value="ficcion">Ficción</option>
+                    <option value="no-ficcion">No Ficción</option>
+                    <option value="academico">Académico</option>
+                    <option value="referencia">Referencia</option>
+                </select>
+
+                <select id="availabilityFilter" class="input-field">
+                    <option value="">Disponibilidad</option>
+                    <option value="available">Disponible</option>
+                    <option value="unavailable">No Disponible</option>
+                </select>
+            </div>
+
+            <% if (locals.user && locals.user.role === 'bibliotecario') { %>
+                <div class="flex gap-2">
+                    <a href="/books/new" class="btn-primary">
+                        <i class="fas fa-plus mr-2"></i>Nuevo Libro
+                    </a>
+                    <a href="/books/bulk-upload" class="btn-secondary">
+                        <i class="fas fa-upload mr-2"></i>Importar
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Book Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8" id="booksGrid">
+            <% if (typeof books !== 'undefined' && books.length > 0) { %>
+                <% books.forEach(function(book) { %>
+                    <div class="group relative book-card" 
+                         data-category="<%= book.category %>"
+                         data-available="<%= book.availableQuantity > 0 %>">
+                        <!-- Book Cover -->
+                        <div class="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
+                            <img src="<%= book.cover_url || book.cover_image || '/img/default-book.png' %>"
+                                 alt="<%= book.title %>"
+                                 class="w-full h-full object-center object-cover group-hover:opacity-75">
+                            
+                            <!-- Availability Badge -->
+                            <div class="absolute top-2 right-2">
+                                <% if (book.availableQuantity > 0) { %>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Disponible
+                                    </span>
+                                <% } else { %>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        No Disponible
+                                    </span>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Book Info -->
+                        <div class="mt-4 flex justify-between">
+                            <div>
+                                <h3 class="text-sm text-gray-700">
+                                    <a href="/books/<%= book.id %>">
+                                        <span aria-hidden="true" class="absolute inset-0"></span>
+                                        <%= book.title %>
+                                    </a>
+                                </h3>
+                                <p class="mt-1 text-sm text-gray-500"><%= book.author %></p>
+                                <p class="mt-1 text-xs text-gray-400">ISBN: <%= book.isbn %></p>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mt-4 flex justify-between items-center">
+                            <% if (locals.user) { %>
+                                <% if (book.availableQuantity > 0) { %>
+                                    <button onclick="requestLoan('<%= book.id %>')" 
+                                            class="text-sm text-primary-600 hover:text-primary-500">
+                                        <i class="fas fa-book-reader mr-1"></i>Solicitar Préstamo
+                                    </button>
+                                <% } %>
+                                
+                                <% if (locals.user.role === 'bibliotecario') { %>
+                                    <div class="flex gap-2">
+                                        <button onclick="editBook('<%= book.id %>')"
+                                                class="text-sm text-gray-600 hover:text-gray-500">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button onclick="deleteBook('<%= book.id %>')"
+                                                class="text-sm text-red-600 hover:text-red-500">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-books text-gray-400 text-5xl mb-4"></i>
+                    <p class="text-gray-500">No se encontraron libros.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Pagination -->
+        <% if (typeof totalPages !== 'undefined' && totalPages > 1) { %>
+            <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6 mt-6">
+                <div class="flex-1 flex justify-between sm:hidden">
+                    <% if (currentPage > 1) { %>
+                        <a href="?page=<%= currentPage - 1 %>" class="btn-secondary">
+                            Anterior
+                        </a>
+                    <% } %>
+                    <% if (currentPage < totalPages) { %>
+                        <a href="?page=<%= currentPage + 1 %>" class="btn-primary">
+                            Siguiente
+                        </a>
+                    <% } %>
+                </div>
+                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                    <div>
+                        <p class="text-sm text-gray-700">
+                            Mostrando página <span class="font-medium"><%= currentPage %></span> de
+                            <span class="font-medium"><%= totalPages %></span>
+                        </p>
+                    </div>
+                    <div>
+                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                            <% if (currentPage > 1) { %>
+                                <a href="?page=1" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Primera</span>
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                            <% } %>
+
+                            <% for(let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                                <a href="?page=<%= i %>" 
+                                   class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium <%= currentPage === i ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:bg-gray-50' %>">
+                                    <%= i %>
+                                </a>
+                            <% } %>
+
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= totalPages %>" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                                    <span class="sr-only">Última</span>
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            <% } %>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+// Search and Filter Functionality
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+const availabilityFilter = document.getElementById('availabilityFilter');
+const booksGrid = document.getElementById('booksGrid');
+
+function filterBooks() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const category = categoryFilter.value;
+    const availability = availabilityFilter.value;
+
+    document.querySelectorAll('.book-card').forEach(book => {
+        let show = true;
+
+        // Search filter
+        const bookContent = book.textContent.toLowerCase();
+        if (searchTerm && !bookContent.includes(searchTerm)) {
+            show = false;
+        }
+
+        // Category filter
+        if (category && book.dataset.category !== category) {
+            show = false;
+        }
+
+        // Availability filter
+        if (availability) {
+            const isAvailable = book.dataset.available === 'true';
+            if ((availability === 'available' && !isAvailable) ||
+                (availability === 'unavailable' && isAvailable)) {
+                show = false;
+            }
+        }
+
+        book.style.display = show ? '' : 'none';
+    });
+}
+
+searchInput.addEventListener('input', filterBooks);
+categoryFilter.addEventListener('change', filterBooks);
+availabilityFilter.addEventListener('change', filterBooks);
+
+// Book Actions
+async function requestLoan(bookId) {
+    try {
+        const response = await fetch('/loans', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bookId })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error al solicitar el préstamo');
+        }
+
+        // Show success message and refresh page
+        alert('Préstamo solicitado correctamente');
+        window.location.reload();
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+async function deleteBook(bookId) {
+    if (!confirm('¿Está seguro de que desea eliminar este libro?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/books/${bookId}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || 'Error al eliminar el libro');
+        }
+
+        // Remove book card from grid
+        document.querySelector(`[data-book-id="${bookId}"]`).remove();
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+function editBook(bookId) {
+    window.location.href = `/books/${bookId}/edit`;
+}
+</script>
