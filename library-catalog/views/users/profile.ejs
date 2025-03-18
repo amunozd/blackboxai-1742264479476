@@ -1,0 +1,239 @@
+<%- include('../layout', { title: 'Mi Perfil' }) %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="md:grid md:grid-cols-3 md:gap-6">
+        <!-- Profile Information -->
+        <div class="md:col-span-1">
+            <div class="px-4 sm:px-0">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Información Personal</h3>
+                <p class="mt-1 text-sm text-gray-600">
+                    Actualiza tu información personal y credenciales de acceso.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-5 md:mt-0 md:col-span-2">
+            <div class="shadow sm:rounded-md sm:overflow-hidden">
+                <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
+                    <!-- User Avatar -->
+                    <div class="flex items-center space-x-4">
+                        <div class="h-16 w-16 rounded-full bg-primary-100 flex items-center justify-center">
+                            <span class="text-2xl font-medium text-primary-600">
+                                <%= user.fullName.charAt(0).toUpperCase() %>
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-900">
+                                <%= user.fullName %>
+                            </h4>
+                            <p class="text-sm text-gray-500">
+                                <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Profile Form -->
+                    <form id="profileForm" class="space-y-6">
+                        <!-- Full Name -->
+                        <div>
+                            <label for="fullName" class="block text-sm font-medium text-gray-700">
+                                Nombre Completo
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="fullName" id="fullName"
+                                    class="input-field"
+                                    value="<%= user.fullName %>" required>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">
+                                Correo Electrónico
+                            </label>
+                            <div class="mt-1">
+                                <input type="email" name="email" id="email"
+                                    class="input-field"
+                                    value="<%= user.email %>" required>
+                            </div>
+                        </div>
+
+                        <!-- Username (read-only) -->
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700">
+                                Nombre de Usuario
+                            </label>
+                            <div class="mt-1">
+                                <input type="text" name="username" id="username"
+                                    class="input-field bg-gray-50"
+                                    value="<%= user.username %>" readonly>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">
+                                El nombre de usuario no puede ser modificado.
+                            </p>
+                        </div>
+
+                        <!-- Change Password Section -->
+                        <div class="border-t border-gray-200 pt-6">
+                            <h4 class="text-md font-medium text-gray-900 mb-4">
+                                Cambiar Contraseña
+                            </h4>
+                            
+                            <!-- Current Password -->
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="currentPassword" class="block text-sm font-medium text-gray-700">
+                                        Contraseña Actual
+                                    </label>
+                                    <div class="mt-1 relative">
+                                        <input type="password" name="currentPassword" id="currentPassword"
+                                            class="input-field">
+                                        <button type="button" class="toggle-password absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- New Password -->
+                                <div>
+                                    <label for="newPassword" class="block text-sm font-medium text-gray-700">
+                                        Nueva Contraseña
+                                    </label>
+                                    <div class="mt-1 relative">
+                                        <input type="password" name="newPassword" id="newPassword"
+                                            class="input-field"
+                                            minlength="6">
+                                        <button type="button" class="toggle-password absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <p class="mt-2 text-sm text-gray-500">
+                                        Mínimo 6 caracteres. Dejar en blanco para mantener la contraseña actual.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="flex justify-end">
+                            <button type="submit" class="btn-primary">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan History -->
+    <div class="mt-10">
+        <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4">Historial de Préstamos</h3>
+        
+        <% if (user.Loans && user.Loans.length > 0) { %>
+            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                <ul class="divide-y divide-gray-200">
+                    <% user.Loans.forEach(function(loan) { %>
+                        <li class="p-4 hover:bg-gray-50">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <% if (loan.Book.cover_url) { %>
+                                        <img src="<%= loan.Book.cover_url %>" alt="<%= loan.Book.title %>"
+                                            class="h-16 w-12 object-cover rounded">
+                                    <% } else { %>
+                                        <div class="h-16 w-12 bg-gray-100 rounded flex items-center justify-center">
+                                            <i class="fas fa-book text-gray-400"></i>
+                                        </div>
+                                    <% } %>
+                                    <div class="ml-4">
+                                        <h4 class="text-sm font-medium text-gray-900">
+                                            <%= loan.Book.title %>
+                                        </h4>
+                                        <p class="text-sm text-gray-500">
+                                            <%= loan.Book.author %>
+                                        </p>
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            Prestado: <%= new Date(loan.loanDate).toLocaleDateString() %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        <%= loan.status === 'active' ? 'bg-green-100 text-green-800' : 
+                                            loan.status === 'overdue' ? 'bg-red-100 text-red-800' :
+                                            loan.status === 'returned' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-gray-100 text-gray-800' %>">
+                                        <%= loan.status === 'active' ? 'Activo' :
+                                            loan.status === 'overdue' ? 'Vencido' :
+                                            loan.status === 'returned' ? 'Devuelto' :
+                                            loan.status === 'lost' ? 'Perdido' : loan.status %>
+                                    </span>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        <%= loan.status === 'returned' ? 
+                                            'Devuelto: ' + new Date(loan.returnDate).toLocaleDateString() :
+                                            'Vence: ' + new Date(loan.dueDate).toLocaleDateString() %>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+        <% } else { %>
+            <div class="bg-white shadow sm:rounded-lg p-6 text-center">
+                <i class="fas fa-book-reader text-gray-400 text-4xl mb-3"></i>
+                <p class="text-gray-500">No hay préstamos registrados.</p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Profile Update Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password Toggle Functionality
+    document.querySelectorAll('.toggle-password').forEach(button => {
+        button.addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? 
+                '<i class="fas fa-eye"></i>' : 
+                '<i class="fas fa-eye-slash"></i>';
+        });
+    });
+
+    // Form Submission
+    const form = document.getElementById('profileForm');
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/users/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                // Show success message
+                alert('Perfil actualizado exitosamente');
+                location.reload();
+            } else {
+                // Show error message
+                alert(result.error || 'Error al actualizar el perfil');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al actualizar el perfil');
+        }
+    });
+});
+</script>
