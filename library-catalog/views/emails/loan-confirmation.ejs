@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #059669;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            background-color: #f8fafc;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 0 0 5px 5px;
+        }
+        .details {
+            background-color: #ecfdf5;
+            border: 1px solid #d1fae5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .details-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #d1fae5;
+        }
+        .details-row:last-child {
+            border-bottom: none;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #059669;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Confirmación de Préstamo</h1>
+    </div>
+    
+    <div class="content">
+        <p>Estimado/a <%= userName %>,</p>
+        
+        <p>Le confirmamos que el préstamo del siguiente libro ha sido registrado exitosamente:</p>
+        
+        <div class="details">
+            <div class="details-row">
+                <strong>Libro:</strong>
+                <span><%= bookTitle %></span>
+            </div>
+            <div class="details-row">
+                <strong>Fecha de préstamo:</strong>
+                <span><%= loanDate %></span>
+            </div>
+            <div class="details-row">
+                <strong>Fecha de devolución:</strong>
+                <span><%= dueDate %></span>
+            </div>
+        </div>
+        
+        <p>Por favor, tenga en cuenta las siguientes recomendaciones:</p>
+        
+        <ul>
+            <li>Mantenga el libro en buen estado</li>
+            <li>No escriba ni subraye en el libro</li>
+            <li>Devuelva el libro antes de la fecha límite</li>
+            <li>En caso de necesitar más tiempo, solicite una extensión del préstamo</li>
+        </ul>
+        
+        <center>
+            <a href="<%= config.app.url %>/loans/<%= loanId %>" class="button">
+                Ver Detalles del Préstamo
+            </a>
+        </center>
+        
+        <p>Si tiene alguna pregunta o necesita asistencia, no dude en contactar al personal de la biblioteca.</p>
+        
+        <p>¡Disfrute de su lectura!</p>
+        
+        <p>Saludos cordiales,<br>
+        El equipo de la biblioteca</p>
+    </div>
+    
+    <div class="footer">
+        <p>Este es un mensaje automático, por favor no responda a este correo.</p>
+        <p>© <%= new Date().getFullYear() %> Sistema de Biblioteca. Todos los derechos reservados.</p>
+    </div>
+</body>
+</html>
