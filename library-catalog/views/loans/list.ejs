@@ -1,0 +1,263 @@
+<%- include('../layout', { title: 'Préstamos' }) %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between mb-6">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                <%= locals.userRole === 'bibliotecario' ? 'Gestión de Préstamos' : 'Mis Préstamos' %>
+            </h2>
+        </div>
+    </div>
+
+    <!-- Loans Table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <% if (loans.length > 0) { %>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <% if (locals.userRole === 'bibliotecario') { %>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Usuario
+                                </th>
+                            <% } %>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Libro
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha Préstamo
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Fecha Devolución
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% loans.forEach(function(loan) { %>
+                            <tr>
+                                <% if (locals.userRole === 'bibliotecario') { %>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="h-8 w-8 rounded-full bg-primary-100 flex items-center justify-center">
+                                                <span class="text-primary-600 font-medium">
+                                                    <%= loan.User.fullName.charAt(0).toUpperCase() %>
+                                                </span>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    <%= loan.User.fullName %>
+                                                </div>
+                                                <div class="text-sm text-gray-500">
+                                                    <%= loan.User.email %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                <% } %>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center">
+                                        <% if (loan.Book.cover_url) { %>
+                                            <img class="h-10 w-8 object-cover rounded" 
+                                                src="<%= loan.Book.cover_url %>" 
+                                                alt="<%= loan.Book.title %>">
+                                        <% } else { %>
+                                            <div class="h-10 w-8 bg-gray-100 rounded flex items-center justify-center">
+                                                <i class="fas fa-book text-gray-400"></i>
+                                            </div>
+                                        <% } %>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                <%= loan.Book.title %>
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <%= loan.Book.author %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        <%= new Date(loan.loanDate).toLocaleDateString() %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        <%= new Date(loan.dueDate).toLocaleDateString() %>
+                                    </div>
+                                    <% if (loan.status === 'active' && new Date() > new Date(loan.dueDate)) { %>
+                                        <div class="text-xs text-red-600">
+                                            Vencido
+                                        </div>
+                                    <% } %>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        <%= loan.status === 'active' ? 'bg-green-100 text-green-800' : 
+                                            loan.status === 'overdue' ? 'bg-red-100 text-red-800' :
+                                            loan.status === 'returned' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-gray-100 text-gray-800' %>">
+                                        <%= loan.status === 'active' ? 'Activo' :
+                                            loan.status === 'overdue' ? 'Vencido' :
+                                            loan.status === 'returned' ? 'Devuelto' :
+                                            loan.status === 'lost' ? 'Perdido' : loan.status %>
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <div class="flex space-x-2">
+                                        <% if (loan.status === 'active' || loan.status === 'overdue') { %>
+                                            <button onclick="returnBook('<%= loan.id %>')" 
+                                                class="text-primary-600 hover:text-primary-900">
+                                                Devolver
+                                            </button>
+                                            <% if (locals.userRole === 'bibliotecario') { %>
+                                                <button onclick="markAsLost('<%= loan.id %>')"
+                                                    class="text-red-600 hover:text-red-900">
+                                                    Marcar perdido
+                                                </button>
+                                            <% } %>
+                                            <button onclick="extendLoan('<%= loan.id %>')"
+                                                class="text-green-600 hover:text-green-900">
+                                                Extender
+                                            </button>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                    <div class="flex-1 flex justify-between sm:hidden">
+                        <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>" class="btn-secondary">
+                                Anterior
+                            </a>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="?page=<%= currentPage + 1 %>" class="btn-secondary">
+                                Siguiente
+                            </a>
+                        <% } %>
+                    </div>
+                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-sm text-gray-700">
+                                Mostrando página <span class="font-medium"><%= currentPage %></span> de
+                                <span class="font-medium"><%= totalPages %></span>
+                            </p>
+                        </div>
+                        <div>
+                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                                <% for(let i = 1; i <= totalPages; i++) { %>
+                                    <% if (i === currentPage) { %>
+                                        <span class="relative inline-flex items-center px-4 py-2 border border-primary-500 bg-primary-50 text-sm font-medium text-primary-600">
+                                            <%= i %>
+                                        </span>
+                                    <% } else { %>
+                                        <a href="?page=<%= i %>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                            <%= i %>
+                                        </a>
+                                    <% } %>
+                                <% } %>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
+            <!-- Empty State -->
+            <div class="text-center py-12">
+                <i class="fas fa-book-reader text-gray-400 text-5xl mb-4"></i>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No hay préstamos</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    <%= locals.userRole === 'bibliotecario' ? 
+                        'No hay préstamos registrados en el sistema.' : 
+                        'No tienes préstamos activos ni históricos.' %>
+                </p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Loan Actions Scripts -->
+<script>
+async function returnBook(loanId) {
+    if (!confirm('¿Estás seguro de que deseas devolver este libro?')) return;
+
+    try {
+        const response = await fetch(`/loans/${loanId}/return`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Error al devolver el libro');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la devolución');
+    }
+}
+
+async function markAsLost(loanId) {
+    if (!confirm('¿Estás seguro de que deseas marcar este libro como perdido?')) return;
+
+    try {
+        const response = await fetch(`/loans/${loanId}/lost`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Error al marcar el libro como perdido');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la operación');
+    }
+}
+
+async function extendLoan(loanId) {
+    if (!confirm('¿Estás seguro de que deseas extender este préstamo por 7 días?')) return;
+
+    try {
+        const response = await fetch(`/loans/${loanId}/extend`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Error al extender el préstamo');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la extensión');
+    }
+}
+</script>
