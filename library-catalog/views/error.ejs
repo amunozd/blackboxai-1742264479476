@@ -1,0 +1,57 @@
+<%- include('layout', { title: 'Error' }) %>
+
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full text-center">
+        <!-- Error Icon -->
+        <div class="mb-8">
+            <i class="fas fa-exclamation-circle text-red-500 text-6xl"></i>
+        </div>
+
+        <!-- Error Message -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">
+                <%= error.status || 500 %>
+            </h1>
+            <p class="text-xl text-gray-600">
+                <%= message %>
+            </p>
+            <% if (error.status === 404) { %>
+                <p class="mt-2 text-gray-500">
+                    La página que estás buscando no existe o ha sido movida.
+                </p>
+            <% } %>
+        </div>
+
+        <!-- Error Details (only in development) -->
+        <% if (process.env.NODE_ENV === 'development' && error.stack) { %>
+            <div class="mt-8 bg-gray-100 rounded-lg p-6 text-left">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Detalles del Error:</h2>
+                <pre class="text-sm text-gray-700 overflow-x-auto">
+                    <%= error.stack %>
+                </pre>
+            </div>
+        <% } %>
+
+        <!-- Back Button -->
+        <div class="mt-8">
+            <button onclick="window.history.back()" class="btn-secondary mr-4">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Volver
+            </button>
+            <a href="/" class="btn-primary">
+                <i class="fas fa-home mr-2"></i>
+                Ir al Inicio
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Additional Styling -->
+<style>
+    .btn-secondary, .btn-primary {
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-secondary:hover, .btn-primary:hover {
+        transform: translateY(-1px);
+    }
+</style>
