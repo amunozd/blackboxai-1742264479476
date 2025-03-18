@@ -1,0 +1,197 @@
+<%- include('../layout', { title: 'Nuevo Préstamo' }) %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="/books/<%= book.id %>" class="inline-flex items-center text-sm font-medium text-gray-500 hover:text-gray-700">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Volver al libro
+        </a>
+    </div>
+
+    <div class="bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-8">
+                Nuevo Préstamo
+            </h3>
+
+            <!-- Book Information -->
+            <div class="mb-8 flex items-start">
+                <!-- Book Cover -->
+                <div class="flex-shrink-0">
+                    <% if (book.cover_url) { %>
+                        <img src="<%= book.cover_url %>" alt="<%= book.title %>" 
+                            class="h-32 w-24 object-cover rounded-lg">
+                    <% } else { %>
+                        <div class="h-32 w-24 bg-gray-100 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-book text-gray-400 text-3xl"></i>
+                        </div>
+                    <% } %>
+                </div>
+
+                <!-- Book Details -->
+                <div class="ml-6">
+                    <h4 class="text-xl font-medium text-gray-900">
+                        <%= book.title %>
+                    </h4>
+                    <p class="text-gray-600">
+                        por <%= book.author %>
+                    </p>
+                    <div class="mt-2 text-sm text-gray-500">
+                        <p>ISBN: <%= book.isbn %></p>
+                        <p>Categoría: <%= book.category %></p>
+                        <p class="mt-2">
+                            Ejemplares disponibles: <%= book.availableQuantity %> de <%= book.quantity %>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <% if (error) { %>
+                <div class="rounded-md bg-red-50 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">
+                                <%= error %>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <!-- Loan Form -->
+            <form action="/loans/new/<%= book.id %>" method="POST" class="space-y-6">
+                <% if (locals.userRole === 'bibliotecario') { %>
+                    <!-- User Selection (for librarians only) -->
+                    <div>
+                        <label for="userId" class="block text-sm font-medium text-gray-700">
+                            Usuario *
+                        </label>
+                        <div class="mt-1">
+                            <select name="userId" id="userId" required
+                                class="input-field">
+                                <option value="">Seleccionar usuario</option>
+                                <% users.forEach(function(user) { %>
+                                    <option value="<%= user.id %>">
+                                        <%= user.fullName %> (<%= user.role %>)
+                                    </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                    </div>
+                <% } %>
+
+                <!-- Due Date -->
+                <div>
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700">
+                        Fecha de Devolución *
+                    </label>
+                    <div class="mt-1">
+                        <% 
+                            const minDate = new Date();
+                            minDate.setDate(minDate.getDate() + 1);
+                            
+                            const maxDate = new Date();
+                            maxDate.setDate(maxDate.getDate() + 30);
+
+                            const defaultDate = new Date();
+                            defaultDate.setDate(defaultDate.getDate() + 14);
+                        %>
+                        <input type="date" name="dueDate" id="dueDate" required
+                            class="input-field"
+                            min="<%= minDate.toISOString().split('T')[0] %>"
+                            max="<%= maxDate.toISOString().split('T')[0] %>"
+                            value="<%= defaultDate.toISOString().split('T')[0] %>">
+                    </div>
+                    <p class="mt-2 text-sm text-gray-500">
+                        El préstamo puede ser por un máximo de 30 días.
+                    </p>
+                </div>
+
+                <!-- Notes -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-gray-700">
+                        Notas
+                    </label>
+                    <div class="mt-1">
+                        <textarea name="notes" id="notes" rows="3"
+                            class="input-field"
+                            placeholder="Observaciones o comentarios sobre el préstamo"></textarea>
+                    </div>
+                </div>
+
+                <!-- Terms -->
+                <div class="relative flex items-start">
+                    <div class="flex items-center h-5">
+                        <input type="checkbox" id="terms" name="terms" required
+                            class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded">
+                    </div>
+                    <div class="ml-3 text-sm">
+                        <label for="terms" class="font-medium text-gray-700">
+                            Acepto los términos del préstamo
+                        </label>
+                        <p class="text-gray-500">
+                            Me comprometo a devolver el libro en buen estado y antes de la fecha límite.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="flex justify-end space-x-3">
+                    <a href="/books/<%= book.id %>" class="btn-secondary">
+                        Cancelar
+                    </a>
+                    <button type="submit" class="btn-primary">
+                        Confirmar Préstamo
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loan Terms -->
+    <div class="mt-8 bg-white shadow sm:rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Términos y Condiciones del Préstamo
+            </h3>
+            <div class="prose prose-sm text-gray-500">
+                <ul class="list-disc pl-5 space-y-2">
+                    <li>El préstamo es personal e intransferible.</li>
+                    <li>El usuario es responsable del cuidado y buen uso del material prestado.</li>
+                    <li>En caso de pérdida o daño, el usuario deberá reponer el material o cubrir su costo.</li>
+                    <li>La devolución debe realizarse en la fecha acordada.</li>
+                    <li>El préstamo puede ser renovado si no hay reservas pendientes.</li>
+                    <li>El retraso en la devolución puede resultar en la suspensión temporal del servicio.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Form Validation Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const dueDateInput = document.getElementById('dueDate');
+    
+    form.addEventListener('submit', function(e) {
+        const selectedDate = new Date(dueDateInput.value);
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setDate(today.getDate() + 30);
+        
+        if (selectedDate <= today) {
+            e.preventDefault();
+            alert('La fecha de devolución debe ser posterior a hoy');
+        } else if (selectedDate > maxDate) {
+            e.preventDefault();
+            alert('El préstamo no puede exceder los 30 días');
+        }
+    });
+});
+</script>
