@@ -1,0 +1,273 @@
+<%- include('../layout', { title: 'Gestión de Usuarios' }) %>
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between mb-6">
+        <div class="flex-1 min-w-0">
+            <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                Gestión de Usuarios
+            </h2>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <% if (users.length > 0) { %>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Usuario
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Rol
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Préstamos Activos
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Estado
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                Acciones
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% users.forEach(function(user) { %>
+                            <tr>
+                                <!-- User Info -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                                            <span class="text-primary-600 font-medium">
+                                                <%= user.fullName.charAt(0).toUpperCase() %>
+                                            </span>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">
+                                                <%= user.fullName %>
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <%= user.email %>
+                                            </div>
+                                            <div class="text-xs text-gray-400">
+                                                @<%= user.username %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <!-- Role -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        <%= user.role === 'bibliotecario' ? 'bg-purple-100 text-purple-800' :
+                                            user.role === 'docente' ? 'bg-blue-100 text-blue-800' :
+                                            'bg-green-100 text-green-800' %>">
+                                        <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %>
+                                    </span>
+                                </td>
+
+                                <!-- Active Loans -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <% if (user.Loans && user.Loans.length > 0) { %>
+                                        <div class="text-sm text-gray-900">
+                                            <%= user.Loans.length %> préstamo<%= user.Loans.length !== 1 ? 's' : '' %>
+                                        </div>
+                                        <button onclick="showLoans('<%= user.id %>')" 
+                                            class="text-primary-600 hover:text-primary-900 text-xs">
+                                            Ver detalles
+                                        </button>
+                                    <% } else { %>
+                                        <span class="text-sm text-gray-500">Sin préstamos</span>
+                                    <% } %>
+                                </td>
+
+                                <!-- Status -->
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                        <%= user.active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
+                                        <%= user.active ? 'Activo' : 'Inactivo' %>
+                                    </span>
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <% if (user.role !== 'bibliotecario') { %>
+                                        <button onclick="toggleUserStatus('<%= user.id %>', <%= user.active %>)"
+                                            class="text-<%= user.active ? 'red' : 'green' %>-600 hover:text-<%= user.active ? 'red' : 'green' %>-900">
+                                            <%= user.active ? 'Desactivar' : 'Activar' %>
+                                        </button>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                    <div class="flex-1 flex justify-between sm:hidden">
+                        <% if (currentPage > 1) { %>
+                            <a href="?page=<%= currentPage - 1 %>" class="btn-secondary">
+                                Anterior
+                            </a>
+                        <% } %>
+                        <% if (currentPage < totalPages) { %>
+                            <a href="?page=<%= currentPage + 1 %>" class="btn-secondary">
+                                Siguiente
+                            </a>
+                        <% } %>
+                    </div>
+                    <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-sm text-gray-700">
+                                Mostrando página <span class="font-medium"><%= currentPage %></span> de
+                                <span class="font-medium"><%= totalPages %></span>
+                            </p>
+                        </div>
+                        <div>
+                            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                                <% for(let i = 1; i <= totalPages; i++) { %>
+                                    <% if (i === currentPage) { %>
+                                        <span class="relative inline-flex items-center px-4 py-2 border border-primary-500 bg-primary-50 text-sm font-medium text-primary-600">
+                                            <%= i %>
+                                        </span>
+                                    <% } else { %>
+                                        <a href="?page=<%= i %>" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                            <%= i %>
+                                        </a>
+                                    <% } %>
+                                <% } %>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } else { %>
+            <!-- Empty State -->
+            <div class="text-center py-12">
+                <i class="fas fa-users text-gray-400 text-5xl mb-4"></i>
+                <h3 class="mt-2 text-sm font-medium text-gray-900">No hay usuarios registrados</h3>
+                <p class="mt-1 text-sm text-gray-500">
+                    Los usuarios se agregarán cuando se registren en el sistema.
+                </p>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Loans Modal -->
+<div id="loansModal" class="fixed z-10 inset-0 overflow-y-auto hidden">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
+
+        <!-- Modal panel -->
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                            Préstamos del Usuario
+                        </h3>
+                        <div id="loansContent" class="mt-2">
+                            <!-- Loans will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button type="button" onclick="closeLoansModal()"
+                    class="btn-secondary w-full sm:w-auto">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+async function toggleUserStatus(userId, currentStatus) {
+    if (!confirm(`¿Estás seguro de que deseas ${currentStatus ? 'desactivar' : 'activar'} este usuario?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/users/${userId}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.error || 'Error al cambiar el estado del usuario');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la solicitud');
+    }
+}
+
+async function showLoans(userId) {
+    try {
+        const response = await fetch(`/users/${userId}/loans`);
+        const data = await response.json();
+
+        if (data.success) {
+            const loansContent = document.getElementById('loansContent');
+            loansContent.innerHTML = data.loans.length > 0 ? 
+                data.loans.map(loan => `
+                    <div class="border-b border-gray-200 py-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="text-sm font-medium text-gray-900">${loan.Book.title}</h4>
+                                <p class="text-sm text-gray-500">${loan.Book.author}</p>
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Prestado: ${new Date(loan.loanDate).toLocaleDateString()}
+                                </p>
+                                <p class="text-xs text-gray-500">
+                                    Vence: ${new Date(loan.dueDate).toLocaleDateString()}
+                                </p>
+                            </div>
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                ${loan.status === 'active' ? 'bg-green-100 text-green-800' : 
+                                loan.status === 'overdue' ? 'bg-red-100 text-red-800' :
+                                'bg-blue-100 text-blue-800'}">
+                                ${loan.status === 'active' ? 'Activo' :
+                                loan.status === 'overdue' ? 'Vencido' : 'Devuelto'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('') :
+                '<p class="text-gray-500 text-center py-4">No hay préstamos para mostrar.</p>';
+
+            document.getElementById('loansModal').classList.remove('hidden');
+        } else {
+            alert(data.error || 'Error al cargar los préstamos');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar los préstamos');
+    }
+}
+
+function closeLoansModal() {
+    document.getElementById('loansModal').classList.add('hidden');
+}
+
+// Close modal when clicking outside
+document.getElementById('loansModal').addEventListener('click', function(event) {
+    if (event.target === this) {
+        closeLoansModal();
+    }
+});
+</script>
