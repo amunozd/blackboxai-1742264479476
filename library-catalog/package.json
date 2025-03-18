@@ -1,0 +1,124 @@
+{
+  "name": "library-catalog",
+  "version": "1.0.0",
+  "description": "Sistema de Catálogo de Biblioteca",
+  "main": "scripts/app.js",
+  "scripts": {
+    "start": "node scripts/app.js",
+    "dev": "nodemon scripts/app.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "migrate": "node scripts/migrations.js migrate",
+    "migrate:undo": "node scripts/migrations.js rollback",
+    "seed": "node scripts/migrations.js seed",
+    "backup": "node scripts/backup.js create",
+    "restore": "node scripts/backup.js restore",
+    "docs": "jsdoc -c jsdoc.json"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "compression": "^1.7.4",
+    "connect-session-sequelize": "^7.1.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-session": "^1.17.3",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "method-override": "^3.0.0",
+    "mysql2": "^3.6.5",
+    "node-cache": "^5.1.2",
+    "nodemailer": "^6.9.7",
+    "sequelize": "^6.35.1",
+    "umzug": "^3.4.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.10",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-jest": "^27.6.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "jest": "^29.7.0",
+    "jsdoc": "^4.0.2",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.1.0",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "scripts/**/*.js",
+      "!scripts/app.js"
+    ],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  },
+  "nodemonConfig": {
+    "watch": [
+      "scripts/",
+      "config/",
+      ".env"
+    ],
+    "ext": "js,json",
+    "ignore": [
+      "node_modules/",
+      "coverage/",
+      "logs/",
+      "public/",
+      "tests/"
+    ]
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2021": true,
+      "jest": true
+    },
+    "extends": [
+      "eslint:recommended",
+      "plugin:node/recommended",
+      "plugin:jest/recommended",
+      "prettier"
+    ],
+    "plugins": [
+      "jest",
+      "prettier"
+    ],
+    "rules": {
+      "prettier/prettier": "error",
+      "no-console": "warn"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "printWidth": 100
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "library",
+    "catalog",
+    "books",
+    "loans",
+    "management"
+  ]
+}
