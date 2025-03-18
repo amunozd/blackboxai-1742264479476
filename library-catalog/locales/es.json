@@ -1,0 +1,156 @@
+{
+  "common": {
+    "welcome": "Bienvenido al Sistema de Biblioteca",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "warning": "Advertencia",
+    "info": "Información",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "actions": "Acciones",
+    "status": "Estado",
+    "details": "Detalles",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "register": "Registrarse",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "email": "Correo Electrónico",
+    "fullName": "Nombre Completo",
+    "role": "Rol",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "rememberMe": "Recordarme",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "loginError": "Error al iniciar sesión",
+    "logoutSuccess": "Sesión cerrada exitosamente",
+    "invalidCredentials": "Credenciales inválidas",
+    "sessionExpired": "La sesión ha expirado"
+  },
+  "books": {
+    "title": "Título",
+    "author": "Autor",
+    "isbn": "ISBN",
+    "category": "Categoría",
+    "publisher": "Editorial",
+    "publicationYear": "Año de Publicación",
+    "quantity": "Cantidad",
+    "availableQuantity": "Cantidad Disponible",
+    "description": "Descripción",
+    "status": {
+      "available": "Disponible",
+      "unavailable": "No Disponible"
+    },
+    "addBook": "Agregar Libro",
+    "editBook": "Editar Libro",
+    "deleteBook": "Eliminar Libro",
+    "bookDetails": "Detalles del Libro",
+    "confirmDelete": "¿Está seguro de eliminar este libro?",
+    "bookAdded": "Libro agregado exitosamente",
+    "bookUpdated": "Libro actualizado exitosamente",
+    "bookDeleted": "Libro eliminado exitosamente"
+  },
+  "loans": {
+    "loanDate": "Fecha de Préstamo",
+    "dueDate": "Fecha de Devolución",
+    "returnDate": "Fecha de Retorno",
+    "status": {
+      "active": "Activo",
+      "overdue": "Vencido",
+      "returned": "Devuelto",
+      "lost": "Perdido"
+    },
+    "createLoan": "Crear Préstamo",
+    "returnBook": "Devolver Libro",
+    "extendLoan": "Extender Préstamo",
+    "loanHistory": "Historial de Préstamos",
+    "confirmReturn": "¿Confirmar devolución del libro?",
+    "loanCreated": "Préstamo creado exitosamente",
+    "bookReturned": "Libro devuelto exitosamente",
+    "loanExtended": "Préstamo extendido exitosamente"
+  },
+  "users": {
+    "profile": "Perfil",
+    "updateProfile": "Actualizar Perfil",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "roles": {
+      "librarian": "Bibliotecario",
+      "teacher": "Docente",
+      "student": "Alumno"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "profileUpdated": "Perfil actualizado exitosamente",
+    "passwordChanged": "Contraseña cambiada exitosamente"
+  },
+  "errors": {
+    "required": "Este campo es requerido",
+    "invalidEmail": "Correo electrónico inválido",
+    "invalidPassword": "Contraseña inválida",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "invalidISBN": "ISBN inválido",
+    "bookNotFound": "Libro no encontrado",
+    "userNotFound": "Usuario no encontrado",
+    "loanNotFound": "Préstamo no encontrado",
+    "bookUnavailable": "Libro no disponible",
+    "loanLimitExceeded": "Límite de préstamos excedido",
+    "serverError": "Error del servidor"
+  },
+  "notifications": {
+    "loanDueReminder": "Recordatorio de devolución",
+    "loanOverdue": "Préstamo vencido",
+    "bookAvailable": "Libro disponible",
+    "newMessage": "Nuevo mensaje"
+  },
+  "reports": {
+    "generateReport": "Generar Reporte",
+    "exportFormat": "Formato de Exportación",
+    "dateRange": "Rango de Fechas",
+    "startDate": "Fecha Inicial",
+    "endDate": "Fecha Final",
+    "reportType": "Tipo de Reporte",
+    "reportGenerated": "Reporte generado exitosamente"
+  },
+  "settings": {
+    "general": "General",
+    "notifications": "Notificaciones",
+    "security": "Seguridad",
+    "language": "Idioma",
+    "theme": "Tema",
+    "emailNotifications": "Notificaciones por Email",
+    "darkMode": "Modo Oscuro"
+  },
+  "pagination": {
+    "showing": "Mostrando",
+    "to": "a",
+    "of": "de",
+    "entries": "registros",
+    "perPage": "por página"
+  },
+  "validation": {
+    "required": "Campo requerido",
+    "minLength": "Mínimo {min} caracteres",
+    "maxLength": "Máximo {max} caracteres",
+    "email": "Email inválido",
+    "number": "Debe ser un número",
+    "positive": "Debe ser un número positivo",
+    "date": "Fecha inválida",
+    "future": "Debe ser una fecha futura",
+    "past": "Debe ser una fecha pasada"
+  }
+}
